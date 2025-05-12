@@ -1,0 +1,591 @@
+<template>
+   
+    <div class="slds-file-selector slds-file-selector_integrated slds-file-selector_integrated" style="background:#fcfcfc">
+        <template if:true={exception}>
+            <div class="slds-file-selector__dropzone slds-file-selector__dropzone_integrated slds-has-drag" aria-hidden="true">
+            <label class="slds-file-selector__body slds-file-selector__body_integrated" for="file-upload-input-01">
+                <svg class="slds-file-selector__body-icon slds-icon slds-icon-text-default" aria-hidden="true">
+                <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#folder"></use>
+                </svg>
+                <span class="slds-file-selector__text slds-file-selector__text_integrated slds-text-heading_medium slds-text-align_center">{errorMessage}</span>
+            </label>
+            </div>
+        </template>
+        <template if:true={currentFolderNotAvailable}>
+            <div class="slds-file-selector__dropzone slds-file-selector__dropzone_integrated slds-has-drag" aria-hidden="true">
+            <label class="slds-file-selector__body slds-file-selector__body_integrated" for="file-upload-input-01">
+                <svg class="slds-file-selector__body-icon slds-icon slds-icon-text-default" aria-hidden="true">
+                <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#folder"></use>
+                </svg>
+                <span class="slds-file-selector__text slds-file-selector__text_integrated slds-text-heading_medium slds-text-align_center">Storage is not configured.</span>
+            </label>
+            </div>
+        </template>
+
+        <div class="slds-clearfix slds-m-vertical_small">
+            <table>
+                <tr>
+                    <template for:each={folderPath} for:item="path">
+                        <template if:false={path.isLastFolder}>
+                            <td width={path.pathStyle} scope="col" class="slds-text-align_center slds-float_left" key={path.uri}>
+                                <div class="slds-truncate" data-id={path.uri} onclick={getFoldersDetails}><a style="color:inherit;" href="javascript:void(0)">
+                                    {path.folderName}
+                                </a></div>
+                            </td>
+                            <td scope="col" class="slds-text-align_center slds-float_left" key={path.uri} style="width:15px;">&nbsp;>&nbsp;</td>
+                        </template>
+                        <template if:true={path.isLastFolder}>
+                            <td width={path.pathStyle} scope="col" class="slds-text-align_center slds-float_left" key={path.uri}>
+                                <div class="slds-truncate" data-id={path.uri} onclick={getFoldersDetails} style="font-weight:bold;"><a style="color:inherit;" href="javascript:void(0)">
+                                    {path.folderName}
+                                </a></div>
+                            </td>
+                        </template>
+                    </template>
+                </tr>
+            </table>
+        </div>
+
+        <div class="slds-clearfix">
+            <div >
+                   
+            
+            <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-m-horizontal_xx-small slds-float_right " data-id="moreOptions" onclick={toggleMoreOptionsVisibility}>
+               
+                <button
+                onblur={dropdownOnBlur}
+                class="slds-button slds-button_icon slds-button_icon-more more-options-button"
+                aria-haspopup="true"
+                aria-expanded="true"
+                title="More Options"
+              >
+                <span>More&nbsp;</span>
+                <svg class="slds-button__icon slds-button__icon_small" aria-hidden="true">
+                  <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+                </svg>
+              </button>
+           
+                <div class="slds-dropdown slds-dropdown_right slds-dropdown_length-with-icon-5" style="width:150px">
+                    <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+                        <template if:true={fileSettings.Can_Create_Folder__c}>
+                            <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item slds-is-selected" role="presentation">
+                                <a aria-checked="false" href="javascript:void(0)" role="menuitemcheckbox" tabindex="-1" onclick={createFolderModelOpen}>
+                                    <span class="slds-truncate" title="Create Folder">
+                                        <svg class="slds-icon slds-icon_selected slds-icon_x-small slds-icon-text-default slds-m-right_x-small slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#add"></use>
+                                        </svg>Create Folder</span>
+                                </a>
+                            </li>
+                        </template>
+                        <template if:true={fileSettings.Template_Button__c}>
+                            <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item" role="presentation">
+                                <a aria-checked="false" href="javascript:void(0)" role="menuitemcheckbox" tabindex="-1" title="Create by Template" data-id={currentFolderUri} onclick={createTemplateFolderModelOpen}>
+                                    <span class="slds-truncate">
+                                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#folder"></use>
+                                        </svg>Create by Template</span>
+                                </a>
+                            </li>
+                        </template>
+                        <template if:true={fileSettings.Can_Share__c}>
+                           <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item" role="presentation">
+                              <a aria-checked="false" href="javascript:void(0)" role="menuitemcheckbox" tabindex="-1" onclick={shareFileModelOpen}>
+                                <span class="slds-truncate">
+                                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#share"></use>
+                                    </svg>Share Files
+                                </span>
+                             </a>
+                            </li>
+                        </template>
+                        <template if:true={fileSettings.Can_Delete__c}>
+                        <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item" role="presentation">
+                            <a aria-checked="false" href="javascript:void(0)" role="menuitemcheckbox" tabindex="-1" onclick={deleteSelectedModelOpen}>
+                                <span class="slds-truncate">
+                                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#delete"></use>
+                                    </svg>Delete 
+                                </span>
+                            </a>
+                        </li>
+                       </template>
+                       <template if:true={fileSettings.Can_Download__c}>
+                        <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item" role="presentation">
+                            <a aria-checked="false" href="javascript:void(0)" role="menuitemcheckbox" tabindex="-1" onclick={downloadSelectedModelOpen}>
+                                <span class="slds-truncate">
+                                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#download"></use>
+                                    </svg>Download 
+                                </span>
+                            </a>
+                        </li>
+                       </template>
+                        
+                        <li class="slds-has-divider_top-space" role="separator"></li>
+                        <li onmouseover={moreLineItemOnMouseIn} onmouseout={moreLineItemOnMouseOut} class="slds-dropdown__item" role="presentation">
+                            <button class="slds-button slds-button_reset slds-p-around_xx-small slds-size_1-of-1" onclick={openSharePointOnline}>
+                                <a style="color:inherit; text-decoration:none;" href="javascript:void(0)">
+                                    Open SharePointOnline
+                                </a></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button
+  class="slds-button slds-button_icon slds-button_icon-border slds-m-horizontal_xx-small refresh-button"
+  title="Refresh"
+  data-id={currentFolderUri}
+  onclick={getFoldersDetails}
+>
+  <svg class="slds-button__icon" aria-hidden="true">
+    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#refresh"></use>
+  </svg>
+</button>
+            
+            <!--<div class="slds-m-horizontal_xx-small slds-float_right" id="fileSelect" onclick={fileUpload}>
+                <input type="file" class="slds-file-selector__input slds-assistive-text" id="fileElem" aria-labelledby="file-selector-primary-label-105 file-selector-secondary-label106" style="display:none" multiple/>
+                <label class="slds-file-selector__body" for="fileElem" id="file-selector-secondary-label106">
+                <span class="slds-file-selector__button slds-button slds-button_neutral">
+                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#upload"></use>
+                    </svg>Upload File</span>
+                </label>
+            </div>-->
+           
+            <template if:true={fileSettings.Allow_Upload__c}>
+              <!--  
+                <input type="file" id="myfile" name="myfile" multiple>
+                   <input type="submit" onchange={handleInputFileChange}>
+                   
+                  
+                  <div class=" file-upload-container" >
+                    <input type="file" multiple class="file-upload-input" 
+                    onchange={handleInputFileChange}
+                    name="fileUpload" />
+                    
+                
+                  </div> --> 
+
+               <div class=" file-upload-container" >
+                    
+                <lightning-input
+                class="file-upload-input"  
+                type="file"
+                onchange={handleInputFileChange}
+                name="fileUpload"
+                multiple
+              >
+              </lightning-input>
+                
+                  </div> 
+                   
+            </template> 
+
+            <div class=" search-container">
+                <lightning-input
+                  class="search-input"
+                  name="enter-search"
+                  value={searchKey}
+                  type="search"
+                  placeholder="Search this list..."
+                  onchange={handleSearch}
+                  variant="label-hidden"
+                >
+                </lightning-input>
+              </div> 
+            
+           
+            
+                </div>
+               
+            
+        </div>
+
+        <div class="slds-scrollable slds-m-top_small" style="height:15rem;position:relative">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-text-body_large slds-no-row-hover" aria-labelledby="element-with-table-label other-element-with-table-label">
+                <tr class="slds-text-title_bold slds-text-heading_small" style="background:#f0f0f0">
+                    <td scope="col" style="width:1%;">
+                        <div class="slds-truncate"></div>
+                    </td>
+                    <td scope="col" style="width:1%;">
+                        <div class="slds-truncate">
+                            <span class="slds-truncate" title="Type">
+                                <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                    <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#unknown"></use>
+                                </svg>
+                            </span>
+                        </div>
+                    </td>
+                    <td scope="col">
+                        <div class="slds-truncate">Name</div>
+                    </td>
+                    <td scope="col">
+                        <div class="slds-truncate">Modified Date</div>
+                    </td>
+                    <td scope="col">
+                        <div class="slds-truncate">Modified By</div>
+                    </td>
+                    <td scope="col" style="width:1%;">
+                        <div class="slds-truncate"></div>
+                    </td>
+                    <template if:true={fileSettings.Can_Rename__c}>
+                        <td scope="col" style="width:1%;">
+                            <div class="slds-truncate"></div>
+                        </td>
+                    </template>
+                    <template if:true={fileSettings.Can_Delete__c}>
+                        <td scope="col" style="width:1%;">
+                            <div class="slds-truncate"></div>
+                        </td>
+                    </template>
+                </tr>
+                <!--<template if:true={showDetails}>-->
+                    <template for:each={searchedResults.folders} for:item="folder">
+                        <tr key={folder.URI}>
+                            <td scope="col">
+                                <div class="slds-truncate">
+                                    <input class="slds-m-left_small" data-id={folder.URI} type="checkbox" disabled/>
+                                </div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">
+                                    <span class="slds-truncate" title="Folder">
+                                        <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#folder"></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate" data-id={folder.URI} onclick={getFoldersDetails}><a style="color:inherit;" href="javascript:void(0)">
+                                    {folder.name}
+                                </a></div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">{folder.timeLastModified}</div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">{folder.editor}</div>
+                            </td>
+                            <td scope="col" style="width:1%;">
+                                <div class="slds-truncate"></div>
+                            </td>
+                            <template if:true={fileSettings.Can_Rename__c}>
+                                <td scope="col">
+                                    <button class="slds-button slds-button_icon slds-button__icon_right" title="Edit" data-id={folder.URI} onclick={updateFolderModelOpen}>
+                                        <svg class="slds-button__icon" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#edit"></use>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </template>
+                            <template if:true={fileSettings.Can_Delete__c}>
+                                <td scope="col">
+                                    <button class="slds-button slds-button_icon slds-button__icon_right" title="Delete" data-id={folder.URI} onclick={deleteFolderModelOpen}>
+                                        <svg class="slds-button__icon" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#delete"></use>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </template>
+                        </tr>
+                    </template>
+                    <template for:each={searchedResults.files} for:item="file">
+                        <tr key={file.name}>
+                            <!--<td scope="col">
+                                <div class="slds-truncate"></div>
+                            </td>-->
+                            <td scope="col">
+                                <div class="slds-truncate">
+                                    <input class="slds-m-left_small" data-id={file.URI} type="checkbox" checked={file.isSelected} onchange={handleFileSelectionChange}/>
+                                </div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">
+                                    <span class="slds-truncate" title={file.fileType}>
+                                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                            <use xlink:href={file.fileSymbol}></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate" data-id={file.serverRelativeUrl} onclick={previewFile}><a style="color:inherit;" href="javascript:void(0)">
+                                    {file.name}
+                                </a></div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">{file.timeLastModified}</div>
+                            </td>
+                            <td scope="col">
+                                <div class="slds-truncate">{file.editor}</div>
+                            </td>
+                          <!--  <td scope="col">
+                                <div class="slds-truncate"></div>
+                            </td> -->
+                            <td scope="col">
+                                <button  class="slds-button slds-button_icon slds-button__icon_right" title="Preview" data-id={file.URI} onclick={filePreviewReadOnly}>
+                                    <svg class="slds-button__icon" aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#preview"></use>
+                                    </svg>
+                                </button>
+                            </td>
+                            <template if:true={fileSettings.Can_Download__c}>
+                                <td scope="col">
+                                    <button class="slds-button slds-button_icon slds-button__icon_right" title="Download" data-id={file.serverRelativeUrl} onclick={downloadFileModelOpen}>
+                                        <svg class="slds-button__icon" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#download"></use>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </template>
+                            <template if:true={fileSettings.Can_Delete__c}>
+                                <td scope="col">
+                                    <button class="slds-button slds-button_icon slds-button__icon_right" title="Delete" data-id={file.URI} onclick={deleteFileModelOpen}>
+                                        <svg class="slds-button__icon" aria-hidden="true">
+                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.28.0#delete"></use>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </template>
+                        </tr>
+                    </template>
+                <!--</template>-->
+            </table>
+
+            <template if:true={loadSpinner}>
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+
+    <template if:true={showModel}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{modelTitle}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <template if:true={isCreateFolder}>
+                        <div><lightning-input
+                            type="text"
+                            value={newFolderName} 
+                            onchange={handleFolderName} 
+                            required="true"
+                            placeholder="Enter folder name"
+                            variant="label-hidden"></lightning-input>
+                            <div class="slds-text-color_error">{folderNameValidation}</div></div>
+                    </template>
+                    <template if:true={isUpdateFolder}>
+                        <div><lightning-input
+                            type="text"
+                            value={updateFolderDetails.name}
+                            onchange={handleUpdateFolderName} 
+                            required="true"
+                            placeholder="Enter folder name"
+                            variant="label-hidden"></lightning-input>
+                            <div class="slds-text-color_error">{folderNameValidation}</div></div>
+                    </template>
+                    <template if:true={isDeleteFolder}>
+                        <div>Are you sure you want to delete this folder <b>{deleteDetails.name}</b>?</div>
+                    </template>
+                    <template if:true={isDeleteFile}>
+                        <div>Are you sure you want to delete this file <b>{deleteDetails.name}</b>?</div>
+                    </template>
+                    <template if:true={isDeleteSelected}>
+                        <div>Are you sure you want to delete the selected items?</div>
+                    </template>
+                    <template if:true={isDownloadFile}>
+                        <div>Are you sure you want to download this file <b>{downloadDetails.name}</b>?</div>
+                    </template>
+                    <template if:true={isDownloadSelected}>
+                        <div>Are you sure you want to download the selected items?</div>
+                    </template>
+
+                    <template if:true={isCreateTemplateFolder}>
+                        <template if:true={templateFolderDetails.foldersAvailable}>
+                            <div>Following folders will be added to current folder <b>{templateFolderDetails.currentFolderName}</b></div>
+                            <div class="slds-scrollable slds-m-top_small" style="height:15rem;position:relative">
+                                <table class="slds-table slds-table_cell-buffer slds-text-body_large slds-no-row-hover" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                    <template for:each={templateFolderDetails.folderList} for:item="folderName">
+                                        <tr key={folderName}>
+                                            <td scope="col" style="width:1%">
+                                                <div class="slds-truncate">
+                                                    <span class="slds-truncate" title="Folder">
+                                                        <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                                            <use xlink:href="/_slds/icons/doctype-sprite/svg/symbols.svg#folder"></use>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td scope="col">
+                                                <div>{folderName}</div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </table>
+                            </div>
+                        </template>
+                        <template if:false={templateFolderDetails.foldersAvailable}>
+                            <div>Folders are not available in {templateFolderDetails.objName}.</div></template>
+                    </template>
+                    <template if:true={isUploadFiles}>
+                        <div class="slds-text-color_error">{invalidFileMessage}</div>
+                        <div class="slds-scrollable slds-m-top_small" style="height:10rem;position:relative">
+                            <table class="slds-table slds-table_cell-buffer slds-text-body_large slds-no-row-hover" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                <template for:each={uploadFiles} for:item="file">
+                                    <tr key={file}>
+                                        <td scope="col" style="width:1%">
+                                            <div class="slds-truncate">
+                                                <span class="slds-truncate" title="File">
+                                                    <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                                        <use xlink:href={file.fileSymbol}></use>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td scope="col">
+                                            <div class="slds-truncate" style="width:15rem;overflow:hidden;">{file.name}</div>
+                                        </td>
+                                        <td scope="col" style="width:2%">
+                                            <div>{file.size}</div>
+                                        </td>
+                                        <td scope="col" style="width:30%">
+                                            <div class="slds-truncate" style="width:100px"><lightning-progress-bar value={file.uploadProgress} size="large" variant="circular"></lightning-progress-bar></div>
+                                        </td>
+                                        <td scope="col" style="width:1%">
+                                            <template if:true={file.isComplete}>
+                                                <div class="slds-truncate">
+                                                    <span class="slds-truncate" title="Completed">
+                                                        <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                                            <use xlink:href="/_slds/icons/action-sprite/svg/symbols.svg#approval"></use>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </template>
+                                            <template if:false={file.validFile}>
+                                                <div class="slds-truncate">
+                                                    <span class="slds-truncate" title="File Error">
+                                                        <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#cancel_file_request"></use>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </template>
+                                            <template if:true={file.isFailed}>
+                                                <div class="slds-truncate">
+                                                    <span class="slds-truncate" title="Upload Failed">
+                                                        <svg class="slds-button__icon slds-button__icon_center" aria-hidden="true">
+                                                            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                    </template>
+                    <!--File Share-->
+                    <template if:true={isFileshare}>
+                        <div class="slds-grid slds-wrap slds-m-around_small">
+                            <div class="slds-col slds-size_4-of-12 slds-m-bottom_xx-small">
+                                <span>To</span>
+                            </div>
+                           <template if:false={showFileShareCcRecipient}>
+                                <div class="slds-col slds-size_7-of-12 slds-m-bottom_xx-small">
+                                    <lightning-input type="text" label="To" data-id="toRecipients"  onchange={handleEmailInputChange} variant="label-hidden" style="color:grey;"></lightning-input>
+                                </div>
+
+                                
+                                <div class="slds-col slds-size_1-of-12 slds-m-bottom_xx-small slds-align_absolute-center">
+                                    <button class="slds-button slds-button_icon slds-button__icon_right" title="Add Cc Recipient" onclick={addFileShareCcRicipient}>
+                                        <span>Cc</span>
+                                    </button>
+                                </div>
+                           </template>
+                            <template if:true={showFileShareCcRecipient}>
+                                <div class="slds-col slds-size_7-of-12 slds-m-bottom_xx-small">
+                                    <lightning-input type="text" label="To" data-id="toRecipients"  onchange={handleEmailInputChange} value={toRecipients} variant="label-hidden" style="color:grey;"></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_4-of-12 slds-m-bottom_xx-small">
+                                    <span>Cc</span>
+                                </div>
+                                <div class="slds-col slds-size_7-of-12 slds-m-bottom_xx-small">
+                                    <lightning-input type="text" label="Cc" data-id="ccRecipients" onchange={handleEmailInputChange} variant="label-hidden" style="color:grey;"></lightning-input>
+                                </div>
+                            </template>
+                            <div class="slds-col slds-size_4-of-12 slds-m-bottom_xx-small">
+                                <span>Language</span>
+                            </div><!--   onchange={handleEmailInputChange}-->
+                            <div class="slds-col slds-size_5-of-12 slds-m-bottom_xx-small">
+                                <lightning-combobox
+                                    name="Language"
+                                    label="Language"
+                                    value={selectedLanguage}
+                                    placeholder="Select Language"
+                                    options={languages}
+                                    onchange={languageChange}
+                                    data-id="emailLanguage"
+                                    variant="label-hidden"
+                                    style="color:grey;">
+                                </lightning-combobox>
+                            </div>
+                            <div class="slds-col slds-size_2-of-12 slds-m-bottom_small"></div>
+                            <div class="slds-col slds-size_4-of-12 slds-m-bottom_small slds-grid–vertical-align-center">
+                                <span>Subject</span>
+                            </div>
+                            <div class="slds-col slds-size_7-of-12 slds-m-bottom_small">
+                                <lightning-input type="text" label="Subject" data-id="emailSubject"  onchange={handleEmailInputChange} variant="label-hidden"   value={selectedTemplateSubject} style="color:grey;"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_4-of-12 slds-m-bottom_small slds-grid–vertical-align-center">
+                                <span>Body</span>
+                            </div>
+                            <div class="slds-col slds-size_8-of-12 slds-m-bottom_small"></div>
+                            <div class="slds-col slds-size_12-of-12">
+                                <lightning-input-rich-text
+                                    value={selectedTemplate}
+                                    onchange={handleEmailInputChange}
+                                    data-id="emailBody">
+                                </lightning-input-rich-text>
+                            </div>
+                        </div>
+
+                    </template>  
+                </div>
+                <footer class="slds-modal__footer">
+                    <template if:false={isUploadFiles}><button class="slds-button slds-button_neutral" onclick={createUpdateDeleteFolderModelClose}>Cancel</button></template>
+                    <template if:true={isUploadFiles}>
+                        <div class="slds-var-m-left_x-small slds-float_left">{uploadedFilesStatus}</div>
+                        <template if:true={closeUploadFiles}><button class="slds-button slds-button_neutral" onclick={createUpdateDeleteFolderModelClose}>Close</button></template>
+                        <button class="slds-button slds-button_brand" disabled={isFilesUploading} onclick={createUpdateDeleteFolderModelClose}>Done</button></template>
+                    <template if:true={isCreateFolder}><button class="slds-button slds-button_brand" onclick={createNewFolder}>Create</button></template>
+                    <template if:true={isUpdateFolder}><button class="slds-button slds-button_brand" onclick={updateFolder}>Save</button></template>
+                    <template if:true={isDeleteFolder}><button class="slds-button slds-button_destructive" onclick={deleteFolder}>Delete</button></template>
+                    <template if:true={isDeleteFile}><button class="slds-button slds-button_destructive" onclick={deleteFile}>Delete</button></template>
+                    <template if:true={isDeleteSelected}><button class="slds-button slds-button_destructive" onclick={deleteSelected}>Delete</button></template>
+                    <template if:true={isFileshare}><button class="slds-button slds-button_brand" onclick={shareFiles}>Share</button></template>
+                    <template if:true={isDownloadSelected}><button class="slds-button slds-button_brand" onclick={downloadSelected}>Download</button></template>
+                    <template if:true={isDownloadFile}><button class="slds-button slds-button_brand" onclick={downloadSingleFile}>Download</button></template>
+                    <template if:true={isCreateTemplateFolder}>
+                        <template if:true={templateFolderDetails.foldersAvailable}><button class="slds-button slds-button_brand" onclick={createTemplateFolders}>Create</button></template>
+                        <template if:false={templateFolderDetails.foldersAvailable}><button class="slds-button slds-button_brand" disabled>Create</button></template>
+                    </template>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+   
+    
+</template>

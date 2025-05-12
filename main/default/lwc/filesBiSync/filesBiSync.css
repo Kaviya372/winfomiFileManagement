@@ -1,0 +1,105 @@
+.refreshRotate {
+    animation: rotate .4s;
+}
+.fileUpload {
+		position:inherit;
+		top:-18px;
+}
+
+@media (max-width: 400px) { /* mobile */ 
+	
+	.search-container {
+		float: right;
+		width: 30%;
+		
+	  }
+	  
+	  .search-input {
+		width: 100%;
+	  }
+	  
+	  .file-upload-container {
+		float: right;
+		position: relative;height:32px;
+	  }
+	  
+	  .file-upload-input {
+		width: 100%;
+		position:inherit;
+		top:-40px;
+	  }
+	  
+	  .refresh-button {
+		float: right;
+	  }
+	  
+	  .more-options-button {
+		float: right;
+	  }
+  }
+
+/* @media screen and (min-width: 351px) and (max-width: 400x) { /* mobile */ /*
+	.search-container {
+		float: right;
+		width: 100%;
+		position: relative;
+        top: -32px;
+	  }
+	  
+	  .search-input {
+		width: 100%;
+	  }
+	  
+	  .file-upload-container {
+		float: right;
+	  }
+	  
+	  .file-upload-input {
+		width: 100%;
+		position:inherit;
+		top: 18px;
+	  }
+	  
+	  .refresh-button {
+		float: right;
+		position: relative;
+        top: 40px;
+	  }
+	  
+	  .more-options-button {
+		float: right;
+		position: relative;
+        top: 40px;
+	  }
+  } */
+  
+  @media (min-width: 401px) { /* desktop */
+	
+	.search-container {
+		float: right;
+		
+	  }
+	  
+	  .search-input {
+		width: 100%;
+	  }
+	  
+	  .file-upload-container {
+		float: right;
+		position: relative;height:32px;
+	  }
+	  
+	  .file-upload-input {
+		width: 100%;
+		position:inherit;
+		top:-20px;
+	  }
+	  
+	  .refresh-button {
+		float: right;
+	  }
+	  
+	  .more-options-button {
+		float: right;
+	  }
+	}

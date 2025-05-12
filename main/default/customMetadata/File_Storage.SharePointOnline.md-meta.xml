@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>SharePointOnline</label>
+    <protected>false</protected>
+    <values>
+        <field>Client_ID__c</field>
+        <value xsi:type="xsd:string">f649e33e-7ae6-488f-ba89-bc3dcde53b66</value>
+    </values>
+    <values>
+        <field>Client_Secret__c</field>
+        <value xsi:type="xsd:string">Sdd1gRlcBQOAynqitSkph+GYnldi3ag80r8NTS95JLw=</value>
+    </values>
+    <values>
+        <field>Name__c</field>
+        <value xsi:type="xsd:string">SharePoint Client Credentials</value>
+    </values>
+    <values>
+        <field>Object_s__c</field>
+        <value xsi:type="xsd:string">Opportunity</value>
+    </values>
+    <values>
+        <field>Resource_ID__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Root_Folder__c</field>
+        <value xsi:type="xsd:string">Salesforce</value>
+    </values>
+    <values>
+        <field>SharePoint_Access_Token__c</field>
+        <value xsi:type="xsd:string">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvd2luZm9taS5zaGFyZXBvaW50LmNvbUBhOWE3ZDRhMC0yZjE2LTQ0ODYtYWNhMC04YWMyY2IwNzBkODAiLCJpc3MiOiIwMDAwMDAwMS0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDBAYTlhN2Q0YTAtMmYxNi00NDg2LWFjYTAtOGFjMmNiMDcwZDgwIiwiaWF0IjoxNjg1ODY5NzQ0LCJuYmYiOjE2ODU4Njk3NDQsImV4cCI6MTY4NTk1NjQ0NCwiaWRlbnRpdHlwcm92aWRlciI6IjAwMDAwMDAxLTAwMDAtMDAwMC1jMDAwLTAwMDAwMDAwMDAwMEBhOWE3ZDRhMC0yZjE2LTQ0ODYtYWNhMC04YWMyY2IwNzBkODAiLCJuYW1laWQiOiJhYTIzOTk0Ny01MDNkLTQyNTktODNmOS1iODNlNzkzZWU2Y2FAYTlhN2Q0YTAtMmYxNi00NDg2LWFjYTAtOGFjMmNiMDcwZDgwIiwib2lkIjoiZTZkMzc1YTItNzI5OC00ODk1LWE3MTYtYjc3NzdkYmE2YjYzIiwic3ViIjoiZTZkMzc1YTItNzI5OC00ODk1LWE3MTYtYjc3NzdkYmE2YjYzIiwidHJ1c3RlZGZvcmRlbGVnYXRpb24iOiJmYWxzZSJ9.cObV6OqHDLGTLGMsaeub4OqCjbv2UEjy2G-gNT-QWgvLEZVr2YxevlFpbMCv1vdAeObRbmOnsTfRxghr0A-oK30c3WO42Fs6mcrLCqhCyw2HQn3gtDJi95SoFopQzmFDjRXD8l39ZBFGX8B7STkpVAFnIkx1P0SbqLBPJkhD2FhDBPY7QmvwZGkPkmv4mzXV3kXL012TRpECDYd6SOpr0gMOb7N1sRi5dgwfLEUhowQJjfsqEfz0RNB96iqvcYbHZQjguzWsrdvC6Yv7LcOHyV6MhHp4vRY2vplfn4721IuevQkIhQLpdRbowVmO4JcaSOGMW7yKQpUFiF0hpt_O-w</value>
+    </values>
+    <values>
+        <field>Site_Name__c</field>
+        <value xsi:type="xsd:string">https://winfomi.sharepoint.com/sites/WinFileMgmSite/</value>
+    </values>
+    <values>
+        <field>Tenant_ID__c</field>
+        <value xsi:type="xsd:string">a9a7d4a0-2f16-4486-aca0-8ac2cb070d80</value>
+    </values>
+    <values>
+        <field>Type__c</field>
+        <value xsi:type="xsd:string">SharePointOnline</value>
+    </values>
+</CustomMetadata>
